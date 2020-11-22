@@ -1,0 +1,58 @@
+#insertForm {
+  width: 250px;
+  margin: 0 auto;
+}
+#insertForm p{
+  text-align: center;
+  font-weight: bold;
+}
+
+#insertForm > div {
+  margin: 0 5px;
+}
+
+#insertForm input,
+#insertForm > div#sendButtonContainer > button.gwt-Button {
+  display: block;
+  width: 100px;
+  margin: 4px auto;
+  padding: 5px;
+}
+
+#insertForm button,
+.cell {
+  color: #fff;
+  background: #4472C4;
+  border-radius: 0;
+  border: none;
+}
+
+.cell {
+  width: 100%;
+}
+
+#table {
+  max-width: 600px;
+  display: block;
+  overflow: auto;
+}
+
+#wrapper {
+  position: relative;
+}
+
+#startStopButtons {
+  position: absolute;
+  top: 6px;
+  left: 620px;
+}
+
+#startStopButtons button{
+  color: #fff;
+  background: #00AE4F;
+  margin: 5px;
+}
+
+#numberFieldContainer > input.gwt-TextBox[type="text"] {
+  border: 2px solid #000;
+}
