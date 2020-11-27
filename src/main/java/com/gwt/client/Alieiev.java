@@ -1,5 +1,6 @@
 package com.gwt.client;
 
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.gwt.shared.FieldVerifier;
@@ -21,6 +22,8 @@ public class Alieiev implements EntryPoint {
 
 	static MyHandler handler = new MyHandler();
 	static CellsHandler cellsHandler = new CellsHandler();
+
+	static boolean isReset;
 
 	public void onModuleLoad() {
 		sendButton.addStyleName("sendButton");
@@ -44,7 +47,7 @@ public class Alieiev implements EntryPoint {
 				return;
 			}
 
-			QuickSort.repeatSort = false;
+			QuickSort.setRepeatSort(true);
 			randomList = RandomIntegerArray.generateArrayWithOneLessOrEqualsThen(cellValue, 30);
 			htmlGenerator.genTable(ListConverter.convertToButtonList(randomList));
 		}
@@ -69,6 +72,7 @@ public class Alieiev implements EntryPoint {
 			}
 
 			RootPanel.get("insertForm").setVisible(false);
+			isReset = false;
 
 			randomList = RandomIntegerArray.generateArrayWithOneLessOrEqualsThen(Integer.parseInt(countNumbers), 30);
 			htmlGenerator.genTable(ListConverter.convertToButtonList(randomList));
@@ -109,18 +113,19 @@ public class Alieiev implements EntryPoint {
 			RootPanel.get("startSortButtonContainer").add(startButton);
 
 			resetButton.addClickHandler(event -> {
+				isReset = true;
 				clearButtons();
 				clearTable();
 				RootPanel.get("insertForm").setVisible(true);
 				nameField.setText("");
 				nameField.setFocus(true);
-				QuickSort.repeatSort = false;
+				QuickSort.setRepeatSort(true);
 			});
 
 			startButton.addClickHandler(event -> {
+				isReset = false;
+				QuickSort.changeSortOrder();
 				QuickSort.sort(randomList, 0, randomList.size()-1);
-				genTable(ListConverter.convertToButtonList(randomList));
-				QuickSort.repeatSort = true;
 			});
 		}
 
@@ -131,7 +136,16 @@ public class Alieiev implements EntryPoint {
 	}
 
 	static class QuickSort {
-		static boolean repeatSort = false;
+		private static boolean repeatSort = true;
+		static final int delayMillis = 100;
+
+		public static void changeSortOrder() {
+			repeatSort = !repeatSort;
+		}
+
+		public static void setRepeatSort(boolean repeatSort) {
+			QuickSort.repeatSort = repeatSort;
+		}
 
 		public static int partition(ArrayList<Integer> arr, int low, int high) {
 			int pivot = arr.get(high);
@@ -156,9 +170,27 @@ public class Alieiev implements EntryPoint {
 		public static void sort(ArrayList<Integer> arr, int low, int high) {
 			if (low < high) {
 				int pi = partition(arr, low, high);
+				if(!isReset)
+					htmlGenerator.genTable(ListConverter.convertToButtonList(randomList));
+				else return;
 
-				sort(arr, low, pi-1);
-				sort(arr, pi+1, high);
+				Timer timer = new Timer() {
+					@Override
+					public void run() {
+						sort(arr, low, pi - 1);
+
+						Timer timer = new Timer() {
+							@Override
+							public void run() {
+								sort(arr, pi + 1, high);
+							}
+						};
+
+						timer.schedule(delayMillis);
+					}
+				};
+
+				timer.schedule(delayMillis);
 			}
 		}
 	}
