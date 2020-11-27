@@ -20,10 +20,13 @@ public class Alieiev implements EntryPoint {
 
 	static ArrayList<Integer> randomList;
 
-	static MyHandler handler = new MyHandler();
+	static InsertFormHandler handler = new InsertFormHandler();
 	static CellsHandler cellsHandler = new CellsHandler();
 
 	static boolean isReset;
+
+	private static final String INCORRECT_RANGE_ALERT_MESSAGE = "Invalid value! Correct value from 1 until 1000";
+	private static final String TABLE_COUNT_CLICK_ALERT_MESSAGE = "Please select a value smaller or equal to 30.";
 
 	public void onModuleLoad() {
 		sendButton.addStyleName("sendButton");
@@ -43,7 +46,7 @@ public class Alieiev implements EntryPoint {
 		public void onClick(ClickEvent event) {
 			int cellValue = Integer.parseInt(event.getRelativeElement().getInnerText());
 			if (cellValue > 30) {
-				Window.alert("Please select a value smaller or equal to 30.");
+				Window.alert(TABLE_COUNT_CLICK_ALERT_MESSAGE);
 				return;
 			}
 
@@ -53,7 +56,7 @@ public class Alieiev implements EntryPoint {
 		}
 	}
 
-	static class MyHandler implements ClickHandler, KeyUpHandler {
+	static class InsertFormHandler implements ClickHandler, KeyUpHandler {
 		public void onClick(ClickEvent event) {
 			sendCountToServer();
 		}
@@ -67,7 +70,7 @@ public class Alieiev implements EntryPoint {
 		private void sendCountToServer() {
 			String countNumbers = nameField.getText();
 			if (!FieldVerifier.isValidCount(countNumbers)) {
-				Window.alert("Invalid value! Correct value from 1 to 1000");
+				Window.alert(INCORRECT_RANGE_ALERT_MESSAGE);
 				return;
 			}
 
